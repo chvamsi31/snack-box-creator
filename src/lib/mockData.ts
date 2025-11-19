@@ -4,7 +4,7 @@ export const mockProducts: Product[] = [
   {
     id: "1",
     name: "Classic Sea Salt Chips",
-    brand: "Crunch Co",
+    brand: "Lay's",
     category: "chips",
     price: 4.99,
     image: "/placeholder.svg",
@@ -26,7 +26,7 @@ export const mockProducts: Product[] = [
   {
     id: "2",
     name: "Spicy Jalapeño Poppers",
-    brand: "Heat Street",
+    brand: "Doritos",
     category: "chips",
     price: 5.49,
     image: "/placeholder.svg",
@@ -44,7 +44,7 @@ export const mockProducts: Product[] = [
   {
     id: "3",
     name: "Dark Chocolate Almonds",
-    brand: "Sweet Spot",
+    brand: "Smartfood",
     category: "chocolate",
     price: 6.99,
     image: "/placeholder.svg",
@@ -62,7 +62,7 @@ export const mockProducts: Product[] = [
   {
     id: "4",
     name: "Mixed Berry Trail Mix",
-    brand: "Nature's Path",
+    brand: "Simply",
     category: "trail-mix",
     price: 7.99,
     image: "/placeholder.svg",
@@ -80,7 +80,7 @@ export const mockProducts: Product[] = [
   {
     id: "5",
     name: "Honey BBQ Beef Jerky",
-    brand: "Wild West",
+    brand: "Chester's",
     category: "jerky",
     price: 9.99,
     image: "/placeholder.svg",
@@ -97,7 +97,7 @@ export const mockProducts: Product[] = [
   {
     id: "6",
     name: "Cheddar Cheese Puffs",
-    brand: "Crunch Co",
+    brand: "Cheetos",
     category: "chips",
     price: 3.99,
     image: "/placeholder.svg",
@@ -114,7 +114,7 @@ export const mockProducts: Product[] = [
   {
     id: "7",
     name: "Matcha Energy Bites",
-    brand: "Zen Snacks",
+    brand: "Tostitos",
     category: "energy",
     price: 8.49,
     image: "/placeholder.svg",
@@ -131,7 +131,7 @@ export const mockProducts: Product[] = [
   {
     id: "8",
     name: "Salted Caramel Popcorn",
-    brand: "Pop Culture",
+    brand: "Smartfood",
     category: "popcorn",
     price: 5.99,
     image: "/placeholder.svg",
@@ -147,7 +147,7 @@ export const mockProducts: Product[] = [
   },
 ];
 
-export const brands = ["Crunch Co", "Heat Street", "Sweet Spot", "Nature's Path", "Wild West", "Zen Snacks", "Pop Culture"];
+export const brands = ["Lay's", "Simply", "Doritos", "Cheetos", "Ruffles", "Fritos", "Smartfood", "Funyuns", "Chester's", "Sunchips", "Rold Gold", "Tostitos"];
 
 export const categories = [
   { id: "all", name: "All Snacks" },
