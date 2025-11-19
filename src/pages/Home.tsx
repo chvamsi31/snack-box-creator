@@ -5,6 +5,33 @@ import { Card, CardContent } from "@/components/ui/card";
 import ProductCard from "@/components/ProductCard";
 import { mockProducts, brands } from "@/lib/mockData";
 import { ArrowRight, Truck } from "lucide-react";
+import laysLogo from "@/assets/brands/lays-logo.png";
+import simplyLogo from "@/assets/brands/simply-logo.png";
+import doritosLogo from "@/assets/brands/doritos-logo.png";
+import cheetosLogo from "@/assets/brands/cheetos-logo.png";
+import rufflesLogo from "@/assets/brands/ruffles-logo.png";
+import fritosLogo from "@/assets/brands/fritos-logo.png";
+import smartfoodLogo from "@/assets/brands/smartfood-logo.png";
+import funyunsLogo from "@/assets/brands/funyuns-logo.png";
+import chestersLogo from "@/assets/brands/chesters-logo.png";
+import sunchipsLogo from "@/assets/brands/sunchips-logo.png";
+import roldGoldLogo from "@/assets/brands/rold-gold-logo.png";
+import tostitosLogo from "@/assets/brands/tostitos-logo.png";
+
+const brandLogos: Record<string, string> = {
+  "Lay's": laysLogo,
+  "Simply": simplyLogo,
+  "Doritos": doritosLogo,
+  "Cheetos": cheetosLogo,
+  "Ruffles": rufflesLogo,
+  "Fritos": fritosLogo,
+  "Smartfood": smartfoodLogo,
+  "Funyuns": funyunsLogo,
+  "Chester's": chestersLogo,
+  "Sunchips": sunchipsLogo,
+  "Rold Gold": roldGoldLogo,
+  "Tostitos": tostitosLogo,
+};
 
 const Home = () => {
   const featuredProducts = mockProducts.filter(p => p.tags.includes("bestseller")).slice(0, 4);
@@ -60,18 +87,33 @@ const Home = () => {
             <h2 className="mb-2 text-3xl font-bold md:text-4xl">Shop by Brand</h2>
             <p className="text-muted-foreground">Your favorite snack brands, all in one place</p>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
-            {brands.map((brand) => (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {brands.slice(0, 12).map((brand) => (
               <Link key={brand} to={`/products?brand=${encodeURIComponent(brand)}`}>
                 <Card className="group cursor-pointer transition-all hover:shadow-hover">
-                  <CardContent className="flex aspect-square items-center justify-center p-6">
-                    <p className="text-center text-sm font-semibold group-hover:text-primary transition-colors">
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <div className="h-20 w-20 mb-3 flex items-center justify-center">
+                      <img
+                        src={brandLogos[brand]}
+                        alt={`${brand} logo`}
+                        className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <p className="text-center text-xs font-semibold group-hover:text-primary transition-colors">
                       {brand}
                     </p>
                   </CardContent>
                 </Card>
               </Link>
             ))}
+          </div>
+          <div className="mt-8 text-center">
+            <Link to="/brands">
+              <Button variant="outline" className="gap-2">
+                View All Brands
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
