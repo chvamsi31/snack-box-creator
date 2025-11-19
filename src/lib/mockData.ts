@@ -1,4 +1,12 @@
 import { Product } from "@/types/product";
+import laysSeaSalt from "@/assets/lays-sea-salt.jpg";
+import doritosJalapeno from "@/assets/doritos-jalapeno.jpg";
+import smartfoodChocolateAlmonds from "@/assets/smartfood-chocolate-almonds.jpg";
+import simplyTrailMix from "@/assets/simply-trail-mix.jpg";
+import chestersJerky from "@/assets/chesters-jerky.jpg";
+import cheetosPuffs from "@/assets/cheetos-puffs.jpg";
+import tostitosChips from "@/assets/tostitos-chips.jpg";
+import smartfoodCaramelPopcorn from "@/assets/smartfood-caramel-popcorn.jpg";
 
 export const mockProducts: Product[] = [
   {
@@ -7,8 +15,8 @@ export const mockProducts: Product[] = [
     brand: "Lay's",
     category: "chips",
     price: 4.99,
-    image: "/placeholder.svg",
-    images: ["/placeholder.svg", "/placeholder.svg", "/placeholder.svg"],
+    image: laysSeaSalt,
+    images: [laysSeaSalt, laysSeaSalt, laysSeaSalt],
     description: "Perfectly crispy kettle-cooked chips with a light touch of sea salt. Made from premium potatoes and cooked in small batches for the perfect crunch.",
     tags: ["gluten-free", "vegan", "bestseller"],
     nutrition: {
@@ -29,8 +37,8 @@ export const mockProducts: Product[] = [
     brand: "Doritos",
     category: "chips",
     price: 5.49,
-    image: "/placeholder.svg",
-    images: ["/placeholder.svg", "/placeholder.svg"],
+    image: doritosJalapeno,
+    images: [doritosJalapeno, doritosJalapeno],
     description: "Bold and spicy chips with real jalapeño flavor. Perfect for heat lovers looking for an authentic kick.",
     tags: ["spicy", "gluten-free", "new"],
     nutrition: {
@@ -47,8 +55,8 @@ export const mockProducts: Product[] = [
     brand: "Smartfood",
     category: "chocolate",
     price: 6.99,
-    image: "/placeholder.svg",
-    images: ["/placeholder.svg"],
+    image: smartfoodChocolateAlmonds,
+    images: [smartfoodChocolateAlmonds],
     description: "Premium whole almonds covered in rich 70% dark chocolate. A perfect balance of sweet and nutty.",
     tags: ["organic", "protein", "bestseller"],
     nutrition: {
@@ -65,8 +73,8 @@ export const mockProducts: Product[] = [
     brand: "Simply",
     category: "trail-mix",
     price: 7.99,
-    image: "/placeholder.svg",
-    images: ["/placeholder.svg", "/placeholder.svg"],
+    image: simplyTrailMix,
+    images: [simplyTrailMix, simplyTrailMix],
     description: "A wholesome blend of dried berries, nuts, and seeds. Perfect for hiking or as a healthy snack.",
     tags: ["organic", "vegan", "protein"],
     nutrition: {
@@ -83,7 +91,7 @@ export const mockProducts: Product[] = [
     brand: "Chester's",
     category: "jerky",
     price: 9.99,
-    image: "/placeholder.svg",
+    image: chestersJerky,
     description: "Premium grass-fed beef jerky with a sweet and smoky BBQ glaze. High in protein, low in fat.",
     tags: ["high-protein", "gluten-free"],
     nutrition: {
@@ -100,7 +108,7 @@ export const mockProducts: Product[] = [
     brand: "Cheetos",
     category: "chips",
     price: 3.99,
-    image: "/placeholder.svg",
+    image: cheetosPuffs,
     description: "Light and airy cheese puffs with real cheddar flavor. A nostalgic favorite for all ages.",
     tags: ["bestseller"],
     nutrition: {
@@ -117,7 +125,7 @@ export const mockProducts: Product[] = [
     brand: "Tostitos",
     category: "energy",
     price: 8.49,
-    image: "/placeholder.svg",
+    image: tostitosChips,
     description: "Organic matcha green tea energy bites with dates and coconut. Natural energy boost without the crash.",
     tags: ["organic", "vegan", "new"],
     nutrition: {
@@ -134,7 +142,7 @@ export const mockProducts: Product[] = [
     brand: "Smartfood",
     category: "popcorn",
     price: 5.99,
-    image: "/placeholder.svg",
+    image: smartfoodCaramelPopcorn,
     description: "Gourmet popcorn drizzled with salted caramel. The perfect sweet and salty combination.",
     tags: ["gluten-free", "bestseller"],
     nutrition: {
