@@ -1,7 +1,7 @@
 export const categories = [
   {
     name: "Chips",
-    icon: "Cpu",
+    icon: "Chip",
   },
   {
     name: "Popcorn",

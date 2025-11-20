@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ProductCard from "@/components/ProductCard";
 import { mockProducts, brands } from "@/lib/mockData";
 import { categories } from "@/lib/categories";
-import { ArrowRight, Truck, Cpu, Popcorn, Flame, Cookie, Nut, Beef } from "lucide-react";
+import { ArrowRight, Truck, Chip, Popcorn, Flame, Cookie, Nut, Beef } from "lucide-react";
 import laysLogo from "@/assets/brands/lays-logo.png";
 import simplyLogo from "@/assets/brands/simply-logo.png";
 import doritosLogo from "@/assets/brands/doritos-logo.png";
@@ -35,7 +35,7 @@ const brandLogos: Record<string, string> = {
 };
 
 const categoryIcons: Record<string, React.ElementType> = {
-  Cpu,
+  Chip,
   Popcorn,
   Flame,
   Cookie,
