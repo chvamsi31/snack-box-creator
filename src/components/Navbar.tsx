@@ -1,11 +1,14 @@
-import { ShoppingCart, Search, Menu } from "lucide-react";
+import { ShoppingCart, Search, Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
 import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import LoginDialog from "@/components/LoginDialog";
 
 const Navbar = () => {
   const { totalItems } = useCart();
+  const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -36,6 +39,9 @@ const Navbar = () => {
           <Button variant="ghost" size="icon">
             <Search className="h-5 w-5" />
           </Button>
+          <Button variant="ghost" size="icon" onClick={() => setLoginOpen(true)}>
+            <User className="h-5 w-5" />
+          </Button>
           <Link to="/cart">
             <Button variant="ghost" size="icon" className="relative">
               <ShoppingCart className="h-5 w-5" />
@@ -50,6 +56,7 @@ const Navbar = () => {
             </Button>
           </Link>
         </div>
+        <LoginDialog open={loginOpen} onOpenChange={setLoginOpen} />
       </div>
     </nav>
   );
