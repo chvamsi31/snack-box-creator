@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import ProductCard from "@/components/ProductCard";
 import { mockProducts, brands } from "@/lib/mockData";
-import { ArrowRight, Truck } from "lucide-react";
+import { categories } from "@/lib/categories";
+import { ArrowRight, Truck, Chip, Popcorn, Flame, Cookie, Nut, Beef } from "lucide-react";
 import laysLogo from "@/assets/brands/lays-logo.png";
 import simplyLogo from "@/assets/brands/simply-logo.png";
 import doritosLogo from "@/assets/brands/doritos-logo.png";
@@ -31,6 +32,15 @@ const brandLogos: Record<string, string> = {
   "Sunchips": sunchipsLogo,
   "Rold Gold": roldGoldLogo,
   "Tostitos": tostitosLogo,
+};
+
+const categoryIcons: Record<string, React.ElementType> = {
+  Chip,
+  Popcorn,
+  Flame,
+  Cookie,
+  Nut,
+  Beef,
 };
 
 const Home = () => {
@@ -114,6 +124,35 @@ const Home = () => {
                 <ArrowRight className="h-4 w-4" />
               </Button>
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Shop by Category */}
+      <section className="py-16 px-4">
+        <div className="container mx-auto">
+          <div className="mb-10 text-center">
+            <h2 className="mb-2 text-3xl font-bold md:text-4xl">Shop by Category</h2>
+            <p className="text-muted-foreground">Explore our snack categories</p>
+          </div>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+            {categories.map((category) => {
+              const Icon = categoryIcons[category.icon];
+              return (
+                <Link key={category.name} to={`/products?category=${encodeURIComponent(category.name)}`}>
+                  <Card className="group cursor-pointer transition-all hover:shadow-hover">
+                    <CardContent className="flex flex-col items-center justify-center p-6">
+                      <div className="h-20 w-20 mb-3 flex items-center justify-center">
+                        <Icon className="h-12 w-12 text-primary transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                      <p className="text-center text-sm font-semibold group-hover:text-primary transition-colors">
+                        {category.name}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
