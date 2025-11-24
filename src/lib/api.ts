@@ -29,6 +29,17 @@ export interface OrderResponse {
   orderDate: string;
 }
 
+export interface NudgeRequest {
+  userEmail: string;
+  productName: string;
+  nudgeType: string;
+}
+
+export interface NudgeResponse {
+  success: boolean;
+  message: string;
+}
+
 // API Service
 export const api = {
   // User login
@@ -75,6 +86,23 @@ export const api = {
     
     if (!response.ok) {
       throw new Error('Failed to fetch orders');
+    }
+    
+    return response.json();
+  },
+
+  // Send nudge
+  sendNudge: async (nudgeData: NudgeRequest): Promise<NudgeResponse> => {
+    const response = await fetch(`${API_BASE_URL}/api/v1/user/nudge`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(nudgeData),
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to send nudge');
     }
     
     return response.json();
