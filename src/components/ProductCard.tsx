@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { useRef } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 import { ShoppingCart } from "lucide-react";
 
 interface ProductCardProps {
@@ -12,9 +15,40 @@ interface ProductCardProps {
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (!user) return;
+    
+    // Start timer for 5 seconds
+    hoverTimerRef.current = setTimeout(async () => {
+      try {
+        await api.sendNudge({
+          userEmail: user.email,
+          productName: product.name,
+          nudgeType: "Hesitated Nudge"
+        });
+      } catch (error) {
+        console.error("Failed to send nudge:", error);
+      }
+    }, 5000);
+  };
+
+  const handleMouseLeave = () => {
+    // Clear timer if user leaves before 5 seconds
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  };
 
   return (
-    <Card className="group overflow-hidden bg-gradient-card transition-all duration-300 hover:shadow-hover">
+    <Card 
+      className="group overflow-hidden bg-gradient-card transition-all duration-300 hover:shadow-hover"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <Link to={`/products/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
