@@ -1,14 +1,25 @@
 import { ShoppingCart, Search, Menu, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import LoginDialog from "@/components/LoginDialog";
 
 const Navbar = () => {
   const { totalItems } = useCart();
+  const { isAuthenticated } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleUserIconClick = () => {
+    if (isAuthenticated) {
+      navigate("/profile");
+    } else {
+      setLoginOpen(true);
+    }
+  };
 
   return (
     <>
@@ -40,7 +51,7 @@ const Navbar = () => {
             <Button variant="ghost" size="icon">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => setLoginOpen(true)}>
+            <Button variant="ghost" size="icon" onClick={handleUserIconClick}>
               <User className="h-5 w-5" />
             </Button>
             <Link to="/cart">
