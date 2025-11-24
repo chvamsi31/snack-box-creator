@@ -4,7 +4,7 @@ import { UserResponse } from "@/lib/api";
 interface AuthContextType {
   user: UserResponse | null;
   isAuthenticated: boolean;
-  login: (email: string) => void;
+  login: (email: string, userData: UserResponse) => void;
   logout: () => void;
 }
 
@@ -29,8 +29,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const login = (email: string) => {
+  const login = (email: string, userData: UserResponse) => {
     localStorage.setItem("userEmail", email);
+    localStorage.setItem("user", JSON.stringify(userData));
+    setUser(userData);
   };
 
   const logout = () => {
