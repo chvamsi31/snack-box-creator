@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 interface LoginDialogProps {
   open: boolean;
@@ -15,11 +19,39 @@ const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Authentication logic will be added later
-    console.log("Form submitted:", { email, password, isSignUp });
+    
+    if (isSignUp) {
+      toast.info("Sign up functionality coming soon!");
+      return;
+    }
+
+    setLoading(true);
+    
+    try {
+      const response = await api.login({ email, password });
+      
+      if (response.success) {
+        login(email);
+        toast.success("Login successful! Welcome back!");
+        onOpenChange(false);
+        setEmail("");
+        setPassword("");
+        navigate("/");
+      } else {
+        toast.error(response.message || "Invalid credentials. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Unable to connect to the server. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -82,9 +114,17 @@ const LoginDialog = ({ open, onOpenChange }: LoginDialogProps) => {
           )}
           <Button
             type="submit"
+            disabled={loading}
             className="w-full h-12 bg-foreground text-background hover:bg-foreground/90 text-sm font-bold uppercase"
           >
-            {isSignUp ? "Sign Up" : "Sign In"}
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Signing In...
+              </>
+            ) : (
+              <>{isSignUp ? "Sign Up" : "Sign In"}</>
+            )}
           </Button>
           <div className="text-center text-sm text-foreground/80">
             {isSignUp ? "Already have an account? " : "Don't have an account? "}
