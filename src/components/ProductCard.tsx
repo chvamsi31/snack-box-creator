@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
 import { ShoppingCart } from "lucide-react";
+import HesitationDialog from "./HesitationDialog";
+import { mockProducts } from "@/lib/mockData";
 
 interface ProductCardProps {
   product: Product;
@@ -17,21 +18,25 @@ const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [showDialog, setShowDialog] = useState(false);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
 
   const handleMouseEnter = () => {
     if (!user) return;
     
     // Start timer for 5 seconds
-    hoverTimerRef.current = setTimeout(async () => {
-      try {
-        await api.sendNudge({
-          userEmail: user.email,
-          productName: product.name,
-          nudgeType: "Hesitated Nudge"
-        });
-      } catch (error) {
-        console.error("Failed to send nudge:", error);
-      }
+    hoverTimerRef.current = setTimeout(() => {
+      // Find 2 recommended products from same brand or category
+      const related = mockProducts
+        .filter(p => 
+          p.id !== product.id && 
+          (p.brand === product.brand || p.category === product.category) &&
+          p.inStock
+        )
+        .slice(0, 2);
+      
+      setRecommendedProducts(related);
+      setShowDialog(true);
     }, 5000);
   };
 
@@ -44,12 +49,20 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <Card 
-      className="group overflow-hidden bg-gradient-card transition-all duration-300 hover:shadow-hover"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <Link to={`/products/${product.id}`}>
+    <>
+      <HesitationDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        hoveredProduct={product}
+        recommendedProducts={recommendedProducts}
+      />
+      
+      <Card 
+        className="group overflow-hidden bg-gradient-card transition-all duration-300 hover:shadow-hover"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <Link to={`/products/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-muted">
           <img
             src={product.image}
@@ -96,6 +109,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </Button>
       </CardFooter>
     </Card>
+    </>
   );
 };
 
