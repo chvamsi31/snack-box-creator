@@ -4,7 +4,7 @@ import { toast } from "sonner";
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
+  addToCart: (product: Product, quantity?: number, discount?: { originalPrice: number; discountPercentage: number; comboId: string }) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -28,7 +28,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
-  const addToCart = (product: Product, quantity = 1) => {
+  const addToCart = (product: Product, quantity = 1, discount?: { originalPrice: number; discountPercentage: number; comboId: string }) => {
     setItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
@@ -40,7 +40,16 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         );
       }
       toast.success(`Added ${product.name} to cart`);
-      return [...prev, { ...product, quantity }];
+      const cartItem: CartItem = { 
+        ...product, 
+        quantity,
+        ...(discount && {
+          originalPrice: discount.originalPrice,
+          discountPercentage: discount.discountPercentage,
+          comboId: discount.comboId
+        })
+      };
+      return [...prev, cartItem];
     });
   };
 
