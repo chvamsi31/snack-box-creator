@@ -87,7 +87,8 @@ const HesitationDialog = ({
         
         <Button 
           onClick={handleAddAllWithDiscount}
-          className="w-full mt-4 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold"
+          variant="destructive"
+          className="w-full mt-4 font-semibold"
           size="lg"
         >
           Add all above to get flat {discountPercentage}% off
