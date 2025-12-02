@@ -20,6 +20,20 @@ const HesitationDialog = ({
   const { addToCart } = useCart();
   
   const allProducts = [hoveredProduct, ...recommendedProducts].slice(0, 3);
+  const discountPercentage = 15;
+  
+  const handleAddAllWithDiscount = () => {
+    const comboId = `combo-${Date.now()}`;
+    allProducts.forEach((product) => {
+      const discountedPrice = product.price * (1 - discountPercentage / 100);
+      addToCart(
+        { ...product, price: discountedPrice },
+        1,
+        { originalPrice: product.price, discountPercentage, comboId }
+      );
+    });
+    onOpenChange(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -70,6 +84,14 @@ const HesitationDialog = ({
             </div>
           ))}
         </div>
+        
+        <Button 
+          onClick={handleAddAllWithDiscount}
+          className="w-full mt-4 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold"
+          size="lg"
+        >
+          Add all above to get flat {discountPercentage}% off
+        </Button>
       </DialogContent>
     </Dialog>
   );

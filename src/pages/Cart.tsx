@@ -56,9 +56,23 @@ const Cart = () => {
                       <div>
                         <p className="text-xs text-muted-foreground">{item.brand}</p>
                         <h3 className="text-lg font-semibold">{item.name}</h3>
-                        <p className="text-lg font-bold text-primary">
-                          ${item.price.toFixed(2)}
-                        </p>
+                        {item.originalPrice ? (
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm text-muted-foreground line-through">
+                              ${item.originalPrice.toFixed(2)}
+                            </p>
+                            <p className="text-lg font-bold text-primary">
+                              ${item.price.toFixed(2)}
+                            </p>
+                            <span className="text-xs font-semibold text-destructive bg-destructive/10 px-2 py-1 rounded">
+                              {item.discountPercentage}% OFF
+                            </span>
+                          </div>
+                        ) : (
+                          <p className="text-lg font-bold text-primary">
+                            ${item.price.toFixed(2)}
+                          </p>
+                        )}
                       </div>
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">

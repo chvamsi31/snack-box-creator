@@ -25,4 +25,7 @@ export interface Product {
 export interface CartItem extends Product {
   quantity: number;
   selectedVariant?: string;
+  originalPrice?: number;
+  discountPercentage?: number;
+  comboId?: string;
 }
