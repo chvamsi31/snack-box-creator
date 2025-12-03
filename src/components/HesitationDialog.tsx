@@ -87,9 +87,8 @@ const HesitationDialog = ({
         
         <Button 
           onClick={handleAddAllWithDiscount}
-          variant="outline"
-          className="w-full mt-4 font-semibold border-destructive text-destructive hover:bg-destructive/10 hover:text-destructive"
-          size="lg"
+          size="sm"
+          className="w-full mt-4"
         >
           <ShoppingBag className="h-4 w-4 mr-1" />
           Add all above to get flat {discountPercentage}% off
