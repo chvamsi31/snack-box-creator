@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/product";
@@ -11,35 +11,41 @@ const DISCOUNT_PERCENTAGE = 10;
 
 const IdleNudgeDialog = () => {
   const [open, setOpen] = useState(false);
-  const [hasShown, setHasShown] = useState(false);
   const { addToCart } = useCart();
+  const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  // Get random products for recommendations
-  const [recommendedProducts] = useState<Product[]>(() => {
+  // Get random products for recommendations - regenerate each time dialog opens
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
+
+  const getRandomProducts = useCallback(() => {
     const inStockProducts = mockProducts.filter(p => p.inStock);
     const shuffled = [...inStockProducts].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, 3);
-  });
+  }, []);
 
-  const resetIdleTimer = useCallback(() => {
-    if (hasShown) return;
-  }, [hasShown]);
+  const startIdleTimer = useCallback(() => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current);
+    }
+    idleTimerRef.current = setTimeout(() => {
+      setRecommendedProducts(getRandomProducts());
+      setOpen(true);
+    }, IDLE_TIMEOUT);
+  }, [getRandomProducts]);
+
+  const handleDialogClose = useCallback((isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      // Restart idle timer when dialog is closed
+      startIdleTimer();
+    }
+  }, [startIdleTimer]);
 
   useEffect(() => {
-    if (hasShown) return;
-
-    let idleTimer: NodeJS.Timeout;
-
-    const startIdleTimer = () => {
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(() => {
-        setOpen(true);
-        setHasShown(true);
-      }, IDLE_TIMEOUT);
-    };
-
     const handleActivity = () => {
-      startIdleTimer();
+      if (!open) {
+        startIdleTimer();
+      }
     };
 
     // Listen to user activity events
@@ -52,12 +58,14 @@ const IdleNudgeDialog = () => {
     startIdleTimer();
 
     return () => {
-      clearTimeout(idleTimer);
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
       events.forEach(event => {
         window.removeEventListener(event, handleActivity);
       });
     };
-  }, [hasShown]);
+  }, [open, startIdleTimer]);
 
   const handleAddAllWithDiscount = () => {
     const comboId = `idle-combo-${Date.now()}`;
@@ -73,7 +81,7 @@ const IdleNudgeDialog = () => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
@@ -85,7 +93,7 @@ const IdleNudgeDialog = () => {
         </DialogHeader>
         
         <div className="flex justify-end mb-4">
-          <Button size="sm" onClick={() => setOpen(false)}>
+          <Button size="sm" onClick={() => handleDialogClose(false)}>
             Continue browsing
           </Button>
         </div>
@@ -109,7 +117,7 @@ const IdleNudgeDialog = () => {
                 size="sm"
                 onClick={() => {
                   addToCart(product);
-                  setOpen(false);
+                  handleDialogClose(false);
                 }}
                 disabled={!product.inStock}
                 className="shrink-0"
