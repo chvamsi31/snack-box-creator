@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Navbar from "@/components/Navbar";
+import IdleNudgeDialog from "@/components/IdleNudgeDialog";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -24,6 +25,7 @@ const App = () => (
         <CartProvider>
           <Toaster />
           <Sonner />
+          <IdleNudgeDialog />
           <BrowserRouter>
             <Navbar />
             <Routes>
