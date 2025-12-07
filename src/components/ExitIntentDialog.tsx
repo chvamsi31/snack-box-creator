@@ -27,21 +27,48 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
   const hasItemsInCart = items.length > 0;
 
   useEffect(() => {
-    // Mouse leave detection (exit intent toward browser close)
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 0 && !hasTriggeredRef.current && activeNudge === null) {
+    const triggerNudge = () => {
+      if (!hasTriggeredRef.current && activeNudge === null) {
         hasTriggeredRef.current = true;
         setOpen(true);
         setActiveNudge("exit");
       }
     };
 
+    // Mouse movement detection - trigger when mouse enters exit zones
+    const handleMouseMove = (e: MouseEvent) => {
+      if (hasTriggeredRef.current || activeNudge !== null) return;
+
+      const exitZoneHeight = 50; // pixels from top edge
+      const backButtonZoneWidth = 150; // pixels from left edge (back button area)
+      const closeButtonZoneWidth = 150; // pixels from right edge (close button area)
+
+      // Check if mouse is in top edge zone
+      if (e.clientY <= exitZoneHeight) {
+        // Back button area (top-left)
+        if (e.clientX <= backButtonZoneWidth) {
+          triggerNudge();
+          return;
+        }
+        // Close button area (top-right)
+        if (e.clientX >= window.innerWidth - closeButtonZoneWidth) {
+          triggerNudge();
+          return;
+        }
+      }
+    };
+
+    // Mouse leave detection (exit intent leaving viewport at top)
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (e.clientY <= 10 && !hasTriggeredRef.current && activeNudge === null) {
+        triggerNudge();
+      }
+    };
+
     // Back button / popstate detection
     const handlePopState = () => {
       if (!hasTriggeredRef.current && activeNudge === null) {
-        hasTriggeredRef.current = true;
-        setOpen(true);
-        setActiveNudge("exit");
+        triggerNudge();
         // Push state back to prevent actual navigation
         window.history.pushState(null, "", window.location.href);
       }
@@ -50,20 +77,20 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
     // Tab visibility change (switching tabs quickly)
     const handleVisibilityChange = () => {
       if (document.hidden && !hasTriggeredRef.current && activeNudge === null) {
-        // Don't trigger immediately, wait for return
-      } else if (!document.hidden && !hasTriggeredRef.current && activeNudge === null) {
-        // User returned to tab - could trigger but we'll keep it for mouse leave
+        triggerNudge();
       }
     };
 
     // Push initial state for back button detection
     window.history.pushState(null, "", window.location.href);
 
+    document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("popstate", handlePopState);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("popstate", handlePopState);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
