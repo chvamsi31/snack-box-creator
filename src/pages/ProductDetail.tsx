@@ -8,6 +8,7 @@ import { useCart } from "@/contexts/CartContext";
 import { ArrowLeft, ShoppingCart, Package } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import ExitIntentDialog from "@/components/ExitIntentDialog";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -174,6 +175,9 @@ const ProductDetail = () => {
             )}
           </div>
         </div>
+
+        {/* Exit Intent Dialog */}
+        <ExitIntentDialog product={product} />
       </div>
     </div>
   );
