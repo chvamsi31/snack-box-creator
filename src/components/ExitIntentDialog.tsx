@@ -35,37 +35,18 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
       }
     };
 
-    // Mouse movement detection - trigger when mouse enters exit zones
-    const handleMouseMove = (e: MouseEvent) => {
-      if (hasTriggeredRef.current || activeNudge !== null) return;
-
-      const exitZoneHeight = 50; // pixels from top edge
-      const backButtonZoneWidth = 150; // pixels from left edge (back button area)
-      const closeButtonZoneWidth = 150; // pixels from right edge (close button area)
-
-      // Check if mouse is in top edge zone
-      if (e.clientY <= exitZoneHeight) {
-        // Back button area (top-left)
-        if (e.clientX <= backButtonZoneWidth) {
-          triggerNudge();
-          return;
-        }
-        // Close button area (top-right)
-        if (e.clientX >= window.innerWidth - closeButtonZoneWidth) {
-          triggerNudge();
-          return;
-        }
-      }
-    };
-
-    // Mouse leave detection (exit intent leaving viewport at top)
+    // Mouse leave detection - only trigger when mouse leaves viewport at top edge
+    // This detects intent to click browser close button (top-right) or back button (top-left)
     const handleMouseLeave = (e: MouseEvent) => {
-      if (e.clientY <= 10 && !hasTriggeredRef.current && activeNudge === null) {
+      if (hasTriggeredRef.current || activeNudge !== null) return;
+      
+      // Only trigger if mouse left through the top of the viewport
+      if (e.clientY <= 0) {
         triggerNudge();
       }
     };
 
-    // Back button / popstate detection
+    // Back button press detection
     const handlePopState = () => {
       if (!hasTriggeredRef.current && activeNudge === null) {
         triggerNudge();
@@ -74,26 +55,15 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
       }
     };
 
-    // Tab visibility change (switching tabs quickly)
-    const handleVisibilityChange = () => {
-      if (document.hidden && !hasTriggeredRef.current && activeNudge === null) {
-        triggerNudge();
-      }
-    };
-
     // Push initial state for back button detection
     window.history.pushState(null, "", window.location.href);
 
-    document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("popstate", handlePopState);
-    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("popstate", handlePopState);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [activeNudge, setActiveNudge]);
 
