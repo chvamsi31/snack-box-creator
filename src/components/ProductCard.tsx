@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNudge } from "@/contexts/NudgeContext";
 import { ShoppingCart } from "lucide-react";
 import HesitationDialog from "./HesitationDialog";
 import { mockProducts } from "@/lib/mockData";
@@ -17,15 +18,21 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const { addToCart } = useCart();
   const { user } = useAuth();
+  const { activeNudge, setActiveNudge } = useNudge();
   const hoverTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
 
   const handleMouseEnter = () => {
     if (!user) return;
+    // Don't start hesitation timer if another nudge is active
+    if (activeNudge !== null) return;
     
     // Start timer for 5 seconds
     hoverTimerRef.current = setTimeout(() => {
+      // Check again before showing
+      if (activeNudge !== null) return;
+      
       // Find 2 recommended products from same brand or category
       const related = mockProducts
         .filter(p => 
@@ -37,6 +44,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
       
       setRecommendedProducts(related);
       setShowDialog(true);
+      setActiveNudge("hesitation");
     }, 5000);
   };
 
@@ -48,11 +56,18 @@ const ProductCard = ({ product }: ProductCardProps) => {
     }
   };
 
+  const handleDialogClose = (isOpen: boolean) => {
+    setShowDialog(isOpen);
+    if (!isOpen) {
+      setActiveNudge(null);
+    }
+  };
+
   return (
     <>
       <HesitationDialog
         open={showDialog}
-        onOpenChange={setShowDialog}
+        onOpenChange={handleDialogClose}
         hoveredProduct={product}
         recommendedProducts={recommendedProducts}
       />
