@@ -35,13 +35,14 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
       }
     };
 
-    // Mouse move detection - trigger when mouse enters the top edge of viewport
-    // This detects intent to click browser close button (top-right) or back button (top-left)
-    const handleMouseMove = (e: MouseEvent) => {
+    // Mouse leave detection - trigger only when mouse actually leaves the viewport from top
+    // This is the closest we can get to detecting mouse on browser close/back buttons
+    // (browser UI is outside webpage detection, so we detect when mouse exits to that area)
+    const handleMouseLeave = (e: MouseEvent) => {
       if (hasTriggeredRef.current || activeNudge !== null) return;
       
-      // Trigger when mouse is in the top 20px of the viewport (browser control zone)
-      if (e.clientY <= 20) {
+      // Only trigger when mouse leaves through the top of the viewport
+      if (e.clientY <= 0) {
         triggerNudge();
       }
     };
@@ -58,11 +59,11 @@ const ExitIntentDialog = ({ product }: ExitIntentDialogProps) => {
     // Push initial state for back button detection
     window.history.pushState(null, "", window.location.href);
 
-    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("popstate", handlePopState);
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("popstate", handlePopState);
     };
   }, [activeNudge, setActiveNudge]);
