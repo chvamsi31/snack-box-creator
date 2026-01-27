@@ -43,8 +43,7 @@ const HesitationDialog = ({
             Can help you find something?
           </DialogTitle>
           <p className="text-sm text-muted-foreground mt-2">
-            It looks like you've paused for a bit. Here are your top 3 matching snacks 
-            based on what you were exploring.
+            Looking unsure? Here’s a quick reassurance — this flavour is among our top sellers this month.
           </p>
         </DialogHeader>
         
