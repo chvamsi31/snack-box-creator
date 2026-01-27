@@ -3,16 +3,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Product } from "@/types/product";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useNudge } from "@/contexts/NudgeContext";
 import { mockProducts } from "@/lib/mockData";
 import { ShoppingBag } from "lucide-react";
 
-const IDLE_TIMEOUT = 20000; // 20 seconds
+const IDLE_TIMEOUT = 5000; // 5 seconds
 const DISCOUNT_PERCENTAGE = 10;
 
 const IdleNudgeDialog = () => {
   const [open, setOpen] = useState(false);
   const { addToCart } = useCart();
+  const { user } = useAuth();
   const { activeNudge, setActiveNudge } = useNudge();
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   
@@ -26,6 +28,9 @@ const IdleNudgeDialog = () => {
   }, []);
 
   const startIdleTimer = useCallback(() => {
+    // Only start timer if user is logged in
+    if (!user) return;
+    
     if (idleTimerRef.current) {
       clearTimeout(idleTimerRef.current);
     }
@@ -37,7 +42,7 @@ const IdleNudgeDialog = () => {
         setActiveNudge("idle");
       }
     }, IDLE_TIMEOUT);
-  }, [getRandomProducts, activeNudge, setActiveNudge]);
+  }, [getRandomProducts, activeNudge, setActiveNudge, user]);
 
   const handleDialogClose = useCallback((isOpen: boolean) => {
     setOpen(isOpen);
@@ -49,6 +54,15 @@ const IdleNudgeDialog = () => {
   }, [startIdleTimer, setActiveNudge]);
 
   useEffect(() => {
+    // Only run if user is logged in
+    if (!user) {
+      // Clear any existing timer if user logs out
+      if (idleTimerRef.current) {
+        clearTimeout(idleTimerRef.current);
+      }
+      return;
+    }
+
     const handleActivity = () => {
       // Only restart timer if no nudge is currently active
       if (!open && activeNudge === null) {
@@ -73,7 +87,7 @@ const IdleNudgeDialog = () => {
         window.removeEventListener(event, handleActivity);
       });
     };
-  }, [open, startIdleTimer, activeNudge]);
+  }, [open, startIdleTimer, activeNudge, user]);
 
   const handleAddAllWithDiscount = () => {
     const comboId = `idle-combo-${Date.now()}`;
