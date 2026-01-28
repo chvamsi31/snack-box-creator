@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useCart } from "@/contexts/CartContext";
 import { Minus, Plus, Trash2, ArrowLeft, ShoppingBag } from "lucide-react";
+import ExitIntentDialog from "@/components/ExitIntentDialog";
 
 const Cart = () => {
   const { items, updateQuantity, removeFromCart, totalPrice, totalItems } = useCart();
@@ -30,6 +31,9 @@ const Cart = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Exit Intent Dialog for Cart page */}
+      <ExitIntentDialog pageType="cart" />
+      
       <div className="container mx-auto px-4 py-8">
         <Link to="/products">
           <Button variant="ghost" className="mb-6 gap-2">
