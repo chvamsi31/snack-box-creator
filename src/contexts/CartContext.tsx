@@ -10,12 +10,17 @@ interface CartContextType {
   clearCart: () => void;
   totalItems: number;
   totalPrice: number;
+  showBundleUpsell: boolean;
+  setShowBundleUpsell: (show: boolean) => void;
+  lastAddedProduct: Product | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [showBundleUpsell, setShowBundleUpsell] = useState(false);
+  const [lastAddedProduct, setLastAddedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
@@ -51,6 +56,29 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       };
       return [...prev, cartItem];
     });
+
+    // Trigger bundle upsell only if:
+    // 1. Not part of a combo/bundle already
+    // 2. User hasn't seen upsell for this product in current session
+    if (!discount?.comboId) {
+      // Check if user has seen upsell for this product
+      try {
+        const seen = JSON.parse(localStorage.getItem('upsellSeen') || '{}');
+        if (!seen[product.id]) {
+          setLastAddedProduct(product);
+          // Small delay to let the toast show first
+          setTimeout(() => {
+            setShowBundleUpsell(true);
+          }, 500);
+        }
+      } catch {
+        // If localStorage fails, still show upsell
+        setLastAddedProduct(product);
+        setTimeout(() => {
+          setShowBundleUpsell(true);
+        }, 500);
+      }
+    }
   };
 
   const removeFromCart = (productId: string) => {
@@ -88,6 +116,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
         clearCart,
         totalItems,
         totalPrice,
+        showBundleUpsell,
+        setShowBundleUpsell,
+        lastAddedProduct,
       }}
     >
       {children}
