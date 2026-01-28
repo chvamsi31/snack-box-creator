@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { CartProvider, useCart } from "@/contexts/CartContext";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { NudgeProvider, useNudge } from "@/contexts/NudgeContext";
@@ -23,11 +24,29 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { showBundleUpsell, setShowBundleUpsell, lastAddedProduct } = useCart();
-  const { replenishmentItems, showReplenishmentNudge, setShowReplenishmentNudge } = useAuth();
-  const { activeNudge } = useNudge();
+  const { replenishmentItems, hasPendingReplenishment, clearPendingReplenishment } = useAuth();
+  const { activeNudge, setActiveNudge } = useNudge();
+  const [showReplenishment, setShowReplenishment] = useState(false);
 
-  // Only show replenishment nudge if no other nudge is active
-  const shouldShowReplenishment = showReplenishmentNudge && activeNudge === null;
+  // Handle replenishment nudge display logic
+  useEffect(() => {
+    if (hasPendingReplenishment && activeNudge === null && !showReplenishment) {
+      // Pending replenishment and no other nudge is active - show it!
+      setShowReplenishment(true);
+      setActiveNudge("replenishment");
+    } else if (hasPendingReplenishment && activeNudge !== null && activeNudge !== "replenishment") {
+      // Another nudge is active - clear the pending flag to avoid showing later
+      clearPendingReplenishment();
+    }
+  }, [hasPendingReplenishment, activeNudge, showReplenishment, clearPendingReplenishment, setActiveNudge]);
+
+  const handleReplenishmentClose = (isOpen: boolean) => {
+    setShowReplenishment(isOpen);
+    if (!isOpen) {
+      clearPendingReplenishment();
+      setActiveNudge(null);
+    }
+  };
 
   return (
     <>
@@ -40,8 +59,8 @@ const AppContent = () => {
         onOpenChange={setShowBundleUpsell}
       />
       <ReplenishmentNudgeDialog
-        open={shouldShowReplenishment}
-        onOpenChange={setShowReplenishmentNudge}
+        open={showReplenishment}
+        onOpenChange={handleReplenishmentClose}
         replenishmentItems={replenishmentItems}
       />
       <BrowserRouter>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
-import { useNudge } from "@/contexts/NudgeContext";
 import { ShoppingCart, Bell, Clock, AlertCircle } from "lucide-react";
 import { ReplenishmentItem, markMultipleReplenishmentNudgesSeen } from "@/lib/replenishmentLogic";
 
@@ -25,15 +24,7 @@ const ReplenishmentNudgeDialog = ({
   replenishmentItems,
 }: ReplenishmentNudgeDialogProps) => {
   const { addToCart } = useCart();
-  const { activeNudge, setActiveNudge } = useNudge();
   const [addedProducts, setAddedProducts] = useState<Set<string>>(new Set());
-
-  // Set active nudge when dialog opens
-  useEffect(() => {
-    if (open && activeNudge === null) {
-      setActiveNudge("replenishment");
-    }
-  }, [open, activeNudge, setActiveNudge]);
 
   const handleClose = () => {
     // Mark all shown products as seen
@@ -42,7 +33,6 @@ const ReplenishmentNudgeDialog = ({
     
     setAddedProducts(new Set());
     onOpenChange(false);
-    setActiveNudge(null);
   };
 
   const handleReorder = (item: ReplenishmentItem) => {

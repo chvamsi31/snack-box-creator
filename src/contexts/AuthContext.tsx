@@ -8,8 +8,8 @@ interface AuthContextType {
   login: (email: string, userData: UserResponse) => void;
   logout: () => void;
   replenishmentItems: ReplenishmentItem[];
-  showReplenishmentNudge: boolean;
-  setShowReplenishmentNudge: (show: boolean) => void;
+  hasPendingReplenishment: boolean;
+  clearPendingReplenishment: () => void;
   checkReplenishment: () => Promise<void>;
 }
 
@@ -18,7 +18,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [replenishmentItems, setReplenishmentItems] = useState<ReplenishmentItem[]>([]);
-  const [showReplenishmentNudge, setShowReplenishmentNudge] = useState(false);
+  const [hasPendingReplenishment, setHasPendingReplenishment] = useState(false);
+  const [replenishmentTimerId, setReplenishmentTimerId] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Check if user is stored in localStorage
@@ -52,13 +53,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       if (filteredItems.length > 0) {
         setReplenishmentItems(filteredItems);
-        // Show nudge after a delay (let user settle in)
-        setTimeout(() => {
-          setShowReplenishmentNudge(true);
-        }, 3000); // 3 seconds after login
+        // Set pending flag after delay
+        const timerId = setTimeout(() => {
+          setHasPendingReplenishment(true);
+        }, 8000); // 8 seconds after login
+        setReplenishmentTimerId(timerId);
       }
     } catch (error) {
       console.log("No orders found or error checking replenishment:", error);
+    }
+  };
+
+  const clearPendingReplenishment = () => {
+    setHasPendingReplenishment(false);
+    setReplenishmentItems([]);
+    if (replenishmentTimerId) {
+      clearTimeout(replenishmentTimerId);
+      setReplenishmentTimerId(null);
     }
   };
 
@@ -75,8 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    setReplenishmentItems([]);
-    setShowReplenishmentNudge(false);
+    clearPendingReplenishment();
     localStorage.removeItem("userEmail");
     localStorage.removeItem("user");
   };
@@ -87,8 +97,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     login,
     logout,
     replenishmentItems,
-    showReplenishmentNudge,
-    setShowReplenishmentNudge,
+    hasPendingReplenishment,
+    clearPendingReplenishment,
     checkReplenishment,
   };
 
