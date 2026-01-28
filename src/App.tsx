@@ -4,11 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CartProvider, useCart } from "@/contexts/CartContext";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { NudgeProvider } from "@/contexts/NudgeContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+import { NudgeProvider, useNudge } from "@/contexts/NudgeContext";
 import Navbar from "@/components/Navbar";
 import IdleNudgeDialog from "@/components/IdleNudgeDialog";
 import BundleUpsellDialog from "@/components/BundleUpsellDialog";
+import ReplenishmentNudgeDialog from "@/components/ReplenishmentNudgeDialog";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
@@ -22,6 +23,11 @@ const queryClient = new QueryClient();
 
 const AppContent = () => {
   const { showBundleUpsell, setShowBundleUpsell, lastAddedProduct } = useCart();
+  const { replenishmentItems, showReplenishmentNudge, setShowReplenishmentNudge } = useAuth();
+  const { activeNudge } = useNudge();
+
+  // Only show replenishment nudge if no other nudge is active
+  const shouldShowReplenishment = showReplenishmentNudge && activeNudge === null;
 
   return (
     <>
@@ -32,6 +38,11 @@ const AppContent = () => {
         addedProduct={lastAddedProduct}
         open={showBundleUpsell}
         onOpenChange={setShowBundleUpsell}
+      />
+      <ReplenishmentNudgeDialog
+        open={shouldShowReplenishment}
+        onOpenChange={setShowReplenishmentNudge}
+        replenishmentItems={replenishmentItems}
       />
       <BrowserRouter>
         <Navbar />

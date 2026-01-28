@@ -1,14 +1,14 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
 interface NudgeContextType {
-  activeNudge: "idle" | "hesitation" | "exit" | "bundle" | null;
-  setActiveNudge: (nudge: "idle" | "hesitation" | "exit" | "bundle" | null) => void;
+  activeNudge: "idle" | "hesitation" | "exit" | "bundle" | "replenishment" | null;
+  setActiveNudge: (nudge: "idle" | "hesitation" | "exit" | "bundle" | "replenishment" | null) => void;
 }
 
 const NudgeContext = createContext<NudgeContextType | undefined>(undefined);
 
 export const NudgeProvider = ({ children }: { children: ReactNode }) => {
-  const [activeNudge, setActiveNudge] = useState<"idle" | "hesitation" | "exit" | "bundle" | null>(null);
+  const [activeNudge, setActiveNudge] = useState<"idle" | "hesitation" | "exit" | "bundle" | "replenishment" | null>(null);
 
   return (
     <NudgeContext.Provider value={{ activeNudge, setActiveNudge }}>
